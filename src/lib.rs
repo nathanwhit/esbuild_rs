@@ -895,6 +895,7 @@ pub struct EsbuildFlags {
     minify: Option<bool>,
     splitting: Option<bool>,
     metafile: Option<bool>,
+    defines: Option<IndexMap<String, String>>,
 }
 fn default<T: Default>() -> T {
     T::default()
@@ -920,6 +921,7 @@ impl Default for EsbuildFlags {
             minify: default(),
             splitting: default(),
             metafile: default(),
+            defines: default(),
         }
     }
 }
@@ -1044,11 +1046,17 @@ impl EsbuildFlags {
                 flags.push("--splitting".to_string());
             }
         }
+        if let Some(defines) = &self.defines {
+            for (key, value) in defines {
+                flags.push(format!("--define:{}={}", key, value));
+            }
+        }
         if let Some(metafile) = self.metafile {
             if metafile {
                 flags.push("--metafile".to_string());
             }
         }
+
         flags
     }
 }
